@@ -15,9 +15,10 @@ const db = require("./models");
 const { count } = require('./models/user.model');
 const Role = db.role;
 
-mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}
-/*`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@immobilo.j6lt89y.mongodb.net/?retryWrites=true&w=majority`*/
-db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+const prod = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@immobilo.j6lt89y.mongodb.net/?retryWrites=true&w=majority`
+/*const local= `mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`*/
+
+db.mongoose.connect(prod, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
