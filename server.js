@@ -15,7 +15,9 @@ const db = require("./models");
 const { count } = require('./models/user.model');
 const Role = db.role;
 
-db.mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@immobilo.j6lt89y.mongodb.net/?retryWrites=true&w=majority`, {
+mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}
+/*`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@immobilo.j6lt89y.mongodb.net/?retryWrites=true&w=majority`*/
+db.mongoose.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -70,7 +72,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to ssamagang application" });
+    res.json({ message: "Welcome to samagang application" });
 })
 require('./routes/auth.routes')(app);
 require('./routes/user.routes')(app);
