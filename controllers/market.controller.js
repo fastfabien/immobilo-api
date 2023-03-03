@@ -18,6 +18,9 @@ exports.createMarket = async (req, res) => {
         /*console.log(newMarket.populate({ path: 'bricks', populate: 'propertie_id' }))*/
 
         const editingBricks = await Brick.findByIdAndUpdate(body.bricks_id, { status: "Selled" }, { new: true, runValidators: true }) 
+        if (!editingBricks) {
+                return res.status(500).send({ message: "Brick introuvable" })
+        }
 
         newMarket.save( (err) => {
                 if(err) {
