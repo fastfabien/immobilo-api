@@ -32,7 +32,7 @@ exports.buyBrick = async (req, res) => {
 	}
 
 	/*Verification si deja achete*/
-	const existBrick = await Bricks.findOne({ propertie_id: brick.properties_id, _id: user.bricks  })
+	const existBrick = await Bricks.findOne({ propertie_id: brick.properties_id, _id: user.bricks, status: "Sell"  })
 	if(existBrick && existBrick.status === "Sell") {
 		console.log("efa misy")
 		existBrick.nombre_bricks = parseFloat(existBrick.nombre_bricks) + parseFloat(brick.nombreBricks)

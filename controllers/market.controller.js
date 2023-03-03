@@ -17,20 +17,14 @@ exports.createMarket = async (req, res) => {
 
         /*console.log(newMarket.populate({ path: 'bricks', populate: 'propertie_id' }))*/
 
-        await Brick.findOne( {id: body.bricks_id}, async (err, brick) => {
-                if(err) {
-                        res.status(500).send({ message: "Identifiant du bricks non trouvé" })
-                        return
-                } 
+        const editingBricks = await Brick.findById(body.bricks_id).exec() 
 
-                brick.status = "Selled";
-                await brick.save((err) => {
-                        if (err) {
-                                res.status(500).send({ message: "Echec de la modification du status" });
-                                return;
-                        }
-                })
-        } )
+        if(editingBricks.status == "Sell") {
+                editingBricks.status = "Selled"
+        } else {
+                res.status(500).send({ message: "Identifiant du bricks non trouvé" })
+                return
+        }
 
         newMarket.save( (err) => {
                 if(err) {
