@@ -17,12 +17,21 @@ exports.createMarket = async (req, res) => {
 
         /*console.log(newMarket.populate({ path: 'bricks', populate: 'propertie_id' }))*/
 
-        const editingBricks = await Brick.findByIdAndUpdate(body.bricks_id, { status: "Selled" }, { new: true, runValidators: true }) 
-        if (!editingBricks) {
-                return res.status(500).send({ message: "Brick introuvable" })
+        const editingBricks = await Brick.find({ id: body.bricks_id, status: "Sell" })
+
+        console.log(editingBricks[0]) 
+        if (editingBricks[0]) {
+                editingBricks[0].status = "Selled";
+                await editingBricks[0].save((err) => {
+                        if (err) {
+                                console.log(err)
+                               return res.status(500).send({ message: err }) 
+                        }
+
+                })
         }
 
-        newMarket.save( (err) => {
+        await newMarket.save( (err) => {
                 if(err) {
                         return res.status(500).send({ message: err })
                 }
