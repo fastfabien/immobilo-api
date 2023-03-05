@@ -1,3 +1,4 @@
+require("dotenv/config");
 const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
@@ -117,4 +118,12 @@ exports.importUserDocument = async (req, res, next) => {
             user
         })
     })
+}
+
+exports.sendPaypalKeys = (req, res) => {
+    res.send(process.env.PAYPAL_CLIENT_ID || 'sb')
+}
+
+exports.addFunds = (req, res) => {
+    console.log(req.body)
 }

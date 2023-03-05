@@ -16,8 +16,15 @@ verifyToken =  (req, res, next) => {
         }
     
 
-        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token }).populate({ path: 'bricks', populate: 'propertie_id' })
-        
+        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
+        .populate({
+            path: 'bricks', 
+            populate: {
+                path: 'propertie_id',
+                select: "id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region"
+                }
+        })
+
         if (!user) {
             throw new Error()
         }

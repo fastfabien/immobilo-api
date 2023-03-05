@@ -33,7 +33,8 @@ const Properties = new mongoose.Schema({
 	description: String,
 	images: [{
 		type: Buffer
-	}]
+	}],
+	image_couverture: Buffer
 })
 
 const propriete = mongoose.model(

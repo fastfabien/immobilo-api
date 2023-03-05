@@ -19,4 +19,5 @@ module.exports = function (app) {
     app.post("/api/market", [authJwt.verifyToken],controller.createMarket)
     app.get("/api/market", [authJwt.verifyToken],controller.getUserMarket)
     app.get("/api/markets", [authJwt.verifyToken],controller.getAllMarket)
+    app.post("/api/markets/sell", [authJwt.verifyToken],controller.sellMarket)
 } 

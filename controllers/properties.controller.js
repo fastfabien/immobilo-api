@@ -45,6 +45,8 @@ exports.createProperties = async (req, res, next) => {
 		propriete.images.push(files[i].buffer)
 	}
 
+	propriete.image_couverture = files[0].buffer
+
 	await propriete.save((err, property) => {
 		if (err) {
 			res.status(500).send({ message: err });
@@ -57,9 +59,21 @@ exports.createProperties = async (req, res, next) => {
 	})
 }
 
-
 exports.getAllProperties = async (req, res, next) => {
-	const propriete = await Propriete.find({})
+	const propriete = await Propriete.find({}, { 
+
+		id: 1,
+		nom: 1,
+		zip: 1,
+		rue: 1,
+		valorisation: 1,
+		rentabiliter: 1,
+		reverser: 1,
+		nb_brique_restant: 1,
+		image_couverture: 1,
+		prix_acquisition: 1
+
+	  }).lean()
 
 	if (!propriete) {
         return res.status(404).send({ message: "Aucun propriete pour l'instant" })   

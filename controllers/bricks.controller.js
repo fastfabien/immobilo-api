@@ -1,6 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const Bricks  = db.bricks
+const User  = db.user
 const Propriete = db.propriete
 var jwt = require("jsonwebtoken");
 
@@ -81,7 +82,16 @@ exports.buyBrick = async (req, res) => {
 exports.getAllUserBricks = async (req, res) => {
 
 	const user = req.user
-	const bricks = await user.bricks
+
+	const currentUser = await User.findOne({ id: user.id }).populate({
+            path: 'bricks', 
+            populate: {
+                path: 'propertie_id',
+                select: "id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region"
+                }
+        }).lean()
+
+	const bricks = await currentUser.bricks
 
 	return res.status(200).send({
 		bricks
