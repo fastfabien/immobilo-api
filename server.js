@@ -23,7 +23,7 @@ const User = db.user
 
 const prod = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@immobilo.j6lt89y.mongodb.net/?retryWrites=true&w=majority`
 const local= `mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`
-
+ 
 db.mongoose.connect(prod, {
     useNewUrlParser: true,
     useUnifiedTopology: true
