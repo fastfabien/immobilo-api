@@ -22,7 +22,7 @@ verifyToken =  (req, res, next) => {
             populate: {
                 path: 'propertie_id',
                 select: "id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region"
-                }
+            }
         })
 
         if (!user) {

@@ -178,82 +178,70 @@ exports.verifyUser = (req, res, next) => {
 };
 
 exports.signupGoogle = async (req, res) => {
-    if (req.body.credential) {
-        axios.get(GOOGLE_API_URL, {
-            headers: {
-                "Authorization": `Bearer ${req.body.credential}`
-            }
-        }).then(async response => {
-            const firstName = response.data.given_name;
-            const lastName = response.data.family_name;
-            const email = response.data.email;
-
-            const existUser = await User.findOne({ email })
-
-            if (existUser) {
-                return res.status(400).send({ message: "Failed! Email is already in use!" })
-            }
-
-            const user = new User({
-                firstName: firstName,
-                lastName: lastName,
-                email: email,
-                status: "Active",
-            });
-
-            var token = await user.generateAuthToken()
-
-            user.confirmationCode = token
-
-            Role.findOne({ name: "user" }, async (err, role) => {
-                if (err) {
-                    res.status(500).send({ message: err });
-                    return;
-                }
-                console.log(role)
-                user.roles = role;
-            });
-
-            await user.save((err) => {
-                if(err) {
-                    return res.status(500).send({ message: err })
-                }
-            })
-
-            console.log(user)
-            
-            res.status(200).send({
-                user, token
-            })
-        })
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).send({ message: "Missing credential" });
     }
 
+    const { data } = await axios.get(GOOGLE_API_URL, {
+      headers: { Authorization: `Bearer ${credential}` },
+    });
+
+    const { given_name: firstName, family_name: lastName, email } = data;
+    const existUser = await User.findOne({ email });
+
+    if (existUser) {
+      return res.status(400).send({ message: "Failed! Email is already in use!" });
+    }
+
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      status: "Active",
+    });
+
+    const token = await user.generateAuthToken();
+    user.confirmationCode = token;
+
+    const role = await Role.findOne({ name: "user" });
+    user.roles = role;
+
+    await user.save();
+    console.log(user);
+
+    res.status(200).send({ user, token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.signinGoogle = async (req, res) => {
-    if (req.body.credential) {
-        axios.get(GOOGLE_API_URL, {
-            headers: {
-                "Authorization": `Bearer ${req.body.credential}`
-            }
-        }).then(async response => {
-            const firstName = response.data.given_name;
-            const lastName = response.data.family_name;
-            const email = response.data.email;
-
-            const user = await User.findOne({ email })
-
-            console.log(user)
-
-            if (!user) {
-                return res.status(400).send({ message: "You are not registered! Please sign up!" })
-            }
-            
-            var token = await user.generateAuthToken()
-            
-            res.status(200).send({
-                user, token
-            })
-        })
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).send({ message: "Missing credential" });
     }
-}
+
+    const { data } = await axios.get(GOOGLE_API_URL, {
+      headers: { Authorization: `Bearer ${credential}` },
+    });
+
+    const { given_name: firstName, family_name: lastName, email } = data;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).send({ message: "You are not registered! Please sign up!" });
+    }
+
+    const token = await user.generateAuthToken();
+    console.log(user);
+
+    res.status(200).send({ user, token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: error.message });
+  }
+};

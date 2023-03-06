@@ -35,5 +35,6 @@ module.exports = function (app) {
         uploadFilesMiddleware.single('file'),
         controller.importUserDocument)
     app.post("/api/user/:id", [authJwt.verifyToken],controller.updateDocumentStatus)
-    app.post("/api/user/paypal", [authJwt.verifyToken], controller.addFunds)
+    app.post("/api/paypal/order", controller.createOrder)
+    app.post("/api/paypal/capture", controller.capturePayment)
 } 

@@ -55,7 +55,11 @@ const user = new mongoose.Schema({
     bricks: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Bricks"
-    }]
+    }],
+    user_benefits: {
+        type: Number,
+        default: 0.0
+    }
 })
 
 user.methods.toJSON  = function () {

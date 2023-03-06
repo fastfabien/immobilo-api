@@ -4,6 +4,14 @@ const config = require("../config/auth.config");
 const User = db.user;
 var jwt = require("jsonwebtoken");
 
+
+const paypal = require("@paypal/checkout-server-sdk");
+const clientId = process.env.PAYPAL_CLIENT_ID;
+const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+
+const environment = new paypal.core.SandboxEnvironment(clientId, clientSecret);
+const client = new paypal.core.PayPalHttpClient(environment);
+
 exports.allAccess = (req, res) => {
     res.status(200).send("Public Content.");
 };
@@ -64,11 +72,14 @@ exports.binaryToBase64 = async(req, res) => {
 
 
 exports.getUser = async (req, res) => {
+    console.log(req.params.id)
     const user = await User.findById(req.params.id).exec()
 
     if(!user) {
         return res.status(404).send({ message: "User not found!" })   
     }
+
+    console.log(user)
 
     return res.status(200).send({user})
 }
@@ -120,10 +131,57 @@ exports.importUserDocument = async (req, res, next) => {
     })
 }
 
+exports.refreshUserInformation = (req, res) => {
+    console.log(user.wallet)
+}
+
 exports.sendPaypalKeys = (req, res) => {
     res.send(process.env.PAYPAL_CLIENT_ID || 'sb')
 }
 
-exports.addFunds = (req, res) => {
+
+exports.createOrder = async (req, res) => {
+    try {
+    const request = new paypal.orders.OrdersCreateRequest();
+    request.prefer("return=representation");
+    request.requestBody({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: req.body.currency,
+            value: req.body.amount,
+          },
+        },
+      ],
+    });
+    const response = await client.execute(request);
+    console.log(response.result.id)
+    const orderId = response.result.id
+    console.log(orderId)
+    res.status(200).send({ orderId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Server Error" });
+    }
+}
+
+exports.capturePayment = async (req, res) => {
     console.log(req.body)
+    try {
+        const request = new paypal.orders.OrdersCaptureRequest(req.body.orderId);
+        request.requestBody({
+            amount: {
+                currency_code: req.body.currency,
+                value: req.body.amount,
+            },
+            final_capture: true,
+            authorization_id: req.body.authorization,
+        });
+        const response = await client.execute(request);
+        res.status(200).send({ message: "Payment captured successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Server Error" });
+    }
 }

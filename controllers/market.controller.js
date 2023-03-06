@@ -8,29 +8,29 @@ var jwt = require("jsonwebtoken");
 
 exports.createMarket = async (req, res) => {
   try {
-    const user = await req.user
-    const body = req.body
+    const { user } = req;
+    const { bricks_id: bricks, new_price: prix } = req.body;
 
     const newMarket = new Market({
-            user: user.id,
-            bricks: body.bricks_id,
-            prix: body.new_price
-    })
+      user: user.id,
+      bricks,
+      prix,
+    });
 
     const editingBricks = await Brick.findOneAndUpdate(
-      { _id: body.bricks_id, status: "Sell" },
+      { _id: bricks, status: "Sell" },
       { $set: { status: "Selled" } },
       { new: true }
     ).lean();
 
-    await newMarket.save()
-    res.status(200).send({ newMarket });  
-  } catch(err) {
-      res.status(500).send({ message: err.message });
+    await Promise.all([newMarket.save(), editingBricks]);
 
+    res.status(200).send({ id: newMarket.id, user: newMarket.user, bricks: newMarket.bricks, prix: newMarket.prix });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
   }
- 
-}
+};
+
 
 
 
@@ -40,7 +40,7 @@ exports.createMarket = async (req, res) => {
 exports.getUserMarket = async (req, res) => {
         const { user } = req;
 
-        const markets = await Market.find({ user: user.id })
+        const markets = await Market.find({ user: user.id, status: 'Sell' })
         .populate({
             path: 'bricks', 
             populate: {
@@ -73,21 +73,18 @@ exports.sellMarket = async (req, res) => {
   const marketId = req.body.market_id;
   const selledMarket = await Market.findOne({ _id: marketId })
     .populate('bricks')
-    .populate('user')
-    .lean();
+    .populate({ path: 'user', populate: 'bricks' })
 
   if (selledMarket) {
     const user = selledMarket.user;
     const bricks = selledMarket.bricks;
 
     /*Enlever l'identifiant du brick dans l'user et augmenter le wallet de l'user par le prix du market*/
-    const bricks_owner_user = await User.findOneAndUpdate(
+    const updatedUser = await User.findOneAndUpdate(
       { _id: user._id },
-      { $pull: { bricks: ObjectId(parseString(bricks.id)) }, $inc: { wallet: parseFloat(req.body.prix_total) } },
+      { $set: { bricks: user.bricks.filter(b => b._id.toString() !== bricks._id.toString()) }, $inc: { wallet: parseFloat(req.body.prix_total) } },
       { new: true }
     ).lean();
-
-    console.log(bricks_owner_user)
 
     /*Status brick revient sur Sell*/
     const bricks_owned = await Brick.findOneAndUpdate(
@@ -97,7 +94,7 @@ exports.sellMarket = async (req, res) => {
     ).lean();
 
     /*Enlever le prix du bricks sur le wallet de currentUser et ajouter l'identifiant du bricks au currentUser*/
-    const udpatedUser = await User.findOneAndUpdate(
+    const updatedCurrentUser = await User.findOneAndUpdate(
       { _id: currentUser._id },
       { $push: { bricks: bricks_owned._id }, $inc: { wallet: -parseFloat(req.body.prix_total) } },
       { new: true }
@@ -108,3 +105,4 @@ exports.sellMarket = async (req, res) => {
     return res.status(200).send({ markets: selledMarket });
   }
 };
+

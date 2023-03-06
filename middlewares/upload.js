@@ -5,7 +5,7 @@ const dbConfig = require("../config/db.config");
 
 const uploadFilesMiddleware = multer({
   limits: {
-    fileSize: 1000000
+    fileSize: 10000000
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(docx|doc|pdf|png|jpg|jpeg)$/)) {

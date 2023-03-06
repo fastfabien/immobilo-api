@@ -80,21 +80,24 @@ exports.buyBrick = async (req, res) => {
 
 
 exports.getAllUserBricks = async (req, res) => {
+  const { id: userId } = req.user;
 
-	const user = req.user
+  const currentUser = await User.findOne({ _id: userId })
+    .populate({
+      path: 'bricks', 
+      populate: {
+        path: 'propertie_id',
+        select: 'id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region'
+      },
+      select: '-__v'
+    })
+    .lean();
 
-	const currentUser = await User.findOne({ id: user.id }).populate({
-            path: 'bricks', 
-            populate: {
-                path: 'propertie_id',
-                select: "id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region"
-                }
-        }).lean()
 
-	const bricks = await currentUser.bricks
 
-	return res.status(200).send({
-		bricks
-	})
+  const bricks = currentUser.bricks;
 
+  return res.status(200).send({
+    bricks
+  });
 }
