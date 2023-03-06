@@ -131,8 +131,34 @@ exports.importUserDocument = async (req, res, next) => {
     })
 }
 
-exports.refreshUserInformation = (req, res) => {
-    console.log(user.wallet)
+exports.refreshUserInformation = async (req, res) => {
+    const currentUser = req.user._id
+
+    const user = await User.findOne({ _id: currentUser }).populate('roles').lean()
+
+    res.status(200).send({ user })
+
+}
+
+exports.refreshDashboard = async (req, res) => {
+
+    const currentUser = req.user._id
+
+    const user = await User.findOne({ _id: currentUser })
+    .populate({
+        path: 'bricks', 
+        populate: {
+            path: 'propertie_id',
+            select: "id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region"
+        }
+    }).lean()
+
+    if(!user) {
+        return res.status(500).send({ message: "User not Found" });
+    }
+
+    return res.status(200).send({ user })
+
 }
 
 exports.sendPaypalKeys = (req, res) => {

@@ -18,6 +18,8 @@ module.exports = function (app) {
         next();
     });
 
+    app.get("/api/user/dashboard", [authJwt.verifyToken], controller.refreshDashboard)
+    app.get("/api/user/refresh", [authJwt.verifyToken], controller.refreshUserInformation)
     app.get("/api/user/all", controller.getAllUser)
     app.get("/api/user/:id", controller.getUser)
 
