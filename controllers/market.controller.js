@@ -12,7 +12,7 @@ exports.createMarket = async (req, res) => {
     const { bricks_id: bricks, new_price: prix } = req.body;
 
     const newMarket = new Market({
-      user: user.id,
+      user: user._id,
       bricks,
       prix,
     });
@@ -25,7 +25,7 @@ exports.createMarket = async (req, res) => {
 
     await Promise.all([newMarket.save(), editingBricks]);
 
-    res.status(200).send({ id: newMarket.id, user: newMarket.user, bricks: newMarket.bricks, prix: newMarket.prix });
+    res.status(200).send({ markets: newMarket });
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
