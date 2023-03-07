@@ -83,7 +83,7 @@ exports.getAllProperties = async (req, res, next) => {
 }
 
 exports.getPropriety = async (req, res, next) => {
-	const property = await Propriete.findById(req.params.id).exec()
+	const property = await Propriete.findById(req.params.id).lean().exec()
 	
 	if (!property) {
         return res.status(404).send({ message: "Aucun propriete trouver" })   

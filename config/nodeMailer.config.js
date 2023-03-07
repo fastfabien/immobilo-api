@@ -7,6 +7,7 @@ const user = config.user
 const origin_url = process.env.CLIENT_ORIGIN
 
 var transport = nodemailer.createTransport({
+    service: 'gmail',
     host: process.env.MAIL_HOST,
     port: process.env.MAIL_PORT,
     auth: {
@@ -16,9 +17,8 @@ var transport = nodemailer.createTransport({
 });
 
 module.exports.sendConfirmationEmail = (name, email, confirmationCode) => {
-    console.log('Check');
     transport.sendMail({
-        from: user,
+        from: '"No Reply" <no-reply@immobilo.com>',
         to: email,
         subject: "Please Confirm Your account",
         html: `<h1>Email Confirmation</h1>
