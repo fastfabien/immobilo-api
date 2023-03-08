@@ -25,8 +25,9 @@ module.exports.calculateUserBenefit = () => {
 	    		var user_benefits = bricks.reduce((acc, curr) => acc + (parseFloat(curr.prix_total) * parseFloat(curr.propertie_id.reverser) / 100), 0);
 	    		console.log(user_benefits)
 	    		user_benefits = client.user_benefits + user_benefits
+	    		wallet = user_benefits + client.wallet
 		    		// Enregistrez le bénéfice mensuel calculé dans la base de données
-		      User.updateOne({ _id: client._id }, { user_benefits }).then(() => {
+		      User.updateOne({ _id: client._id }, { user_benefits, wallet }).then(() => {
 		        console.log(`Bénéfice mensuel pour ${client.firstName} : ${user_benefits} €`);
 		      }).catch((err) => console.error(`Erreur de mise à jour du bénéfice mensuel pour ${client.nom} :`, err));
 	    	}

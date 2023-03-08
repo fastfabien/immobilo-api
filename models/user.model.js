@@ -20,6 +20,10 @@ const user = new mongoose.Schema({
         type: Number,
         default: 1000.0
     },
+    invested_money: {
+        type: Number,
+        default: 0.0
+    },
     document: {
         type: Buffer
     },

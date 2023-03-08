@@ -96,7 +96,7 @@ exports.sellMarket = async (req, res) => {
     /*Enlever le prix du bricks sur le wallet de currentUser et ajouter l'identifiant du bricks au currentUser*/
     const updatedCurrentUser = await User.findOneAndUpdate(
       { _id: currentUser._id },
-      { $push: { bricks: bricks_owned._id }, $inc: { wallet: -parseFloat(req.body.prix_total) } },
+      { $push: { bricks: bricks_owned._id }, $inc: { wallet: -parseFloat(req.body.prix_total), invested_money: parseFloat(req.body.prix_total) } },
       { new: true }
     ).lean();
 

@@ -39,6 +39,7 @@ exports.buyBrick = async (req, res) => {
 		existBrick.nombre_bricks = parseFloat(existBrick.nombre_bricks) + parseFloat(brick.nombreBricks)
 		existBrick.prix_total = parseFloat(existBrick.prix_total) + parseFloat(brick.prixTotalBricks)
 		user.wallet = parseFloat(user.wallet) - parseFloat(brick.prixTotalBricks)
+		user.invested_money += parseFloat(brick.prixTotalBricks)
 		await existBrick.save((err) => {
 			if(err) {
 				return res.status(500).send({ message: err.message })
@@ -54,6 +55,7 @@ exports.buyBrick = async (req, res) => {
 		})
 	} else {
 		user.wallet = parseFloat(user.wallet) - parseFloat(brick.prixTotalBricks)
+		user.invested_money += parseFloat(brick.prixTotalBricks)
 		user.bricks.push(newBrick.id)
 
 		
