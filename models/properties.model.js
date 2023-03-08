@@ -30,7 +30,12 @@ const Properties = new mongoose.Schema({
 	aire: Number,
 	revente: Number,
 	renovation: Number,
-	description: String,
+	description: [{
+		type: String
+	}],
+	about: [{
+		type: String
+	}],
 	images: [{
 		type: Buffer
 	}],

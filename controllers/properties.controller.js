@@ -2,12 +2,30 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const Propriete  = db.propriete
 var jwt = require("jsonwebtoken");
+const sharp = require("sharp")
 
 
 
 exports.createProperties = async (req, res, next) => {
 	const value = req.body;
 	const files = req.files
+
+	const filteredDescription = []
+	const filteredAbout = []
+
+	for (const key in value) {
+		if(key.startsWith("des")) {
+			filteredDescription.push(value[key])
+		}
+	}
+
+	for (const key in value) {
+		if(key.startsWith("about")) {
+			filteredAbout.push(value[key])
+		}
+	}
+
+	console.log(filteredDescription)
 	
 	const propriete = new Propriete({
 		nom: value.nom,
@@ -36,13 +54,29 @@ exports.createProperties = async (req, res, next) => {
 		nombre_lots: parseFloat(value.nombre_lots),
 		loyer_mensuel: parseFloat(value.loyer_mensuel),
 		aire: parseFloat(value.aire),
-		description:  value.description,
+		description:  filteredDescription,
+		about: filteredAbout,
 		nb_brique: (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent))/10,
 		nb_brique_restant: (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent))/10,
 	})
 
 	for (let i = 0; i < files.length; i++) {
-		propriete.images.push(files[i].buffer)
+		let compressedImage = null
+		if (files[i].size >= 1000000) {
+			compressedImage = await sharp(files[i].buffer)
+			  .resize({ width: 500 })
+			  .jpeg({ quality: 30 })
+			  .png({ compressionLevel: 5 })
+			  .toBuffer();
+			  console.log('ato ee!')
+		} else {
+			compressedImage = await sharp(files[i].buffer)
+			  .resize({ width: 500 })
+			  .jpeg({ quality: 80 })
+			  .png({ compressionLevel: 6 })
+			  .toBuffer();
+		}
+		propriete.images.push(compressedImage)
 	}
 
 	propriete.image_couverture = files[0].buffer
