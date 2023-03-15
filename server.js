@@ -22,8 +22,8 @@ const Role = db.role;
 const User = db.user
 
 const prod = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@immobilo.j6lt89y.mongodb.net/?retryWrites=true&w=majority`
-const local= `mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`
- 
+const local = `mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`
+
 db.mongoose.connect(prod, {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -40,11 +40,11 @@ automate.calculateUserBenefit()
 
 
 function initial() {
-    Role.estimatedDocumentCount( async (err, count) => {
+    Role.estimatedDocumentCount(async (err, count) => {
         if (!err && count === 0) {
             await new Role({
                 name: "user"
-            }).save( async (err, role) => {
+            }).save(async (err, role) => {
                 if (err) {
                     console.log("error", err)
                 }
@@ -61,13 +61,13 @@ function initial() {
 
                 user.roles = role;
                 user.confirmationCode = token,
-                tokens = await user.generateAuthToken()
+                    tokens = await user.generateAuthToken()
                 await user.save(err => {
                     if (err) {
-                    console.log("error", err);
+                        console.log("error", err);
                     }
                 })
-             console.log("added 'user' to roles collection");
+                console.log("added 'user' to roles collection");
             });
 
             await new Role({
@@ -82,7 +82,7 @@ function initial() {
 
             await new Role({
                 name: "admin"
-            }).save( async (err, role) => {
+            }).save(async (err, role) => {
                 if (err) {
                     console.log("error", err);
                 }
@@ -98,11 +98,11 @@ function initial() {
 
                 admin.roles = role;
                 admin.confirmationCode = token,
-                tokens = await admin.generateAuthToken()
+                    tokens = await admin.generateAuthToken()
                 await admin.save(err => {
                     if (err) {
-                    console.log("error", err);
-                }
+                        console.log("error", err);
+                    }
                     console.log("added 'admin' account to collection");
                 })
 

@@ -18,7 +18,7 @@ const user = new mongoose.Schema({
     paysActuel: String,
     wallet: {
         type: Number,
-        default: 1000.0
+        default: 0.0
     },
     invested_money: {
         type: Number,
@@ -66,7 +66,7 @@ const user = new mongoose.Schema({
     }
 })
 
-user.methods.toJSON  = function () {
+user.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject()
 
@@ -78,7 +78,7 @@ user.methods.toJSON  = function () {
     return userObject
 }
 
-user.methods.generateAuthToken = async function() {
+user.methods.generateAuthToken = async function () {
     const user = this
     const token = jwt.sign({ _id: user._id.toString() }, config.secret)
 
@@ -87,7 +87,7 @@ user.methods.generateAuthToken = async function() {
 
     return token
 
-}   
+}
 
 const User = mongoose.model(
     "User", user

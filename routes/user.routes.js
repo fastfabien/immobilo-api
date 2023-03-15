@@ -8,7 +8,7 @@ const upload = multer({ dest: './my-uploads/' })
 
 module.exports = function (app) {
     app.use(bodyParser.json())
-    app.use(bodyParser.urlencoded({extended: true}))
+    app.use(bodyParser.urlencoded({ extended: true }))
     app.use(function (req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",
@@ -30,13 +30,17 @@ module.exports = function (app) {
         [authJwt.verifyToken, authJwt.isModerator],
         controller.moderatorBoard
     )
-    app.patch("/api/user/completeInfo", [authJwt.verifyToken],controller.completeUserInformation)
+    app.patch("/api/user/completeInfo", [authJwt.verifyToken], controller.completeUserInformation)
     app.post(
         "/api/user/document",
         [authJwt.verifyToken],
         uploadFilesMiddleware.single('file'),
         controller.importUserDocument)
-    app.post("/api/user/:id", [authJwt.verifyToken],controller.updateDocumentStatus)
+    app.post("/api/user/:id", [authJwt.verifyToken], controller.updateDocumentStatus)
     app.post("/api/paypal/order", controller.createOrder)
     app.post("/api/paypal/capture", controller.capturePayment)
+    app.post('api/send/paypal/key', controller.sendPaypalKeys)
+    app.post("/api/create-checkout-session", controller.createCheckoutSession)
+    app.post("/api/update-user-amount", [authJwt.verifyToken], controller.updateUserAmount)
+    app.post("/api/update-user-amount-paypal", [authJwt.verifyToken], controller.updateUserAmountViaPaypal)
 } 
