@@ -183,30 +183,6 @@ exports.updateUserAmountViaPaypal = async (req, res) => {
 }
 
 
-// exports.createOrder = async (req, res) => {
-//     try {
-//         const request = new paypal.orders.OrdersCreateRequest();
-//         request.prefer("return=representation");
-//         request.requestBody({
-//             intent: "CAPTURE",
-//             purchase_units: [
-//                 {
-//                     amount: {
-//                         currency_code: req.body.currency,
-//                         value: req.body.amount,
-//                     },
-//                 },
-//             ],
-//         });
-//         const response = await client.execute(request);
-//         const orderId = response.result.id;
-//         res.status(200).send({ orderId });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send({ error: "Server Error" });
-//     }
-// };
-
 exports.createOrder = async (req, res) => {
     try {
         const request = new paypal.orders.OrdersCreateRequest();
@@ -295,7 +271,7 @@ exports.updateUserAmount = async (req, res) => {
 
     const user = await User.findOneAndUpdate(
         { _id: currentUser._id },
-        { $inc: { wallet: parseFloat(amount) / 2 } },
+        { $inc: { wallet: parseFloat(amount) } },
         { new: true }
     ).lean();
 
