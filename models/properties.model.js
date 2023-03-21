@@ -27,9 +27,11 @@ const Properties = new mongoose.Schema({
 	totalite_lots: String,
 	nombre_lots: Number,
 	loyer_mensuel: Number,
+	charge_co_proprietes: Number,
+	taxe_foncières: Number,
+	assurance: Number,
 	aire: Number,
-	revente: Number,
-	renovation: Number,
+	potentiel_plus_value: Number,
 	description: [{
 		type: String
 	}],

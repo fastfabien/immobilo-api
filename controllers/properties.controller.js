@@ -13,6 +13,10 @@ exports.createProperties = async (req, res, next) => {
 	const filteredDescription = []
 	const filteredAbout = []
 
+	const valorisation = (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent))
+	const revenu_reverser = parseFloat(value.loyer_collecter_annuel) - parseFloat(value.charge_co_proprietes) - parseFloat(value.taxe_foncières) - parseFloat(value.frais_agence) - parseFloat(value.remboursement_emprunt) - parseFloat(value.taxes) - parseFloat(value.assurance)
+	const reverser = ((parseFloat(revenu_reverser) / parseFloat(valorisation)) * 100).toFixed(2)
+
 	for (const key in value) {
 		if (key.startsWith("des")) {
 			filteredDescription.push(value[key])
@@ -25,28 +29,24 @@ exports.createProperties = async (req, res, next) => {
 		}
 	}
 
-	console.log(filteredDescription)
-
 	const propriete = new Propriete({
 		nom: value.nom,
 		rue: value.rue,
 		region: value.region,
 		zip: value.zip,
-		revente: parseFloat(value.revente),
-		renovation: parseFloat(value.renovation),
-		hausse: parseFloat(value.hausse),
-		rentabiliter: (parseFloat(value.revente) + ((parseFloat(value.loyer_collecter_annuel) - parseFloat(value.frais_agence) - parseFloat(value.remboursement_emprunt) + parseFloat(value.taxes)) / (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent)) * 100)).toFixed(2),
+		potentiel_plus_value: parseFloat(value.potentiel_plus_value),
+		rentabiliter: parseFloat(reverser) + parseFloat(value.potentiel_plus_value),
 		prix_acquisition: parseFloat(value.prix_acquisition),
 		renumeration_service: parseFloat(value.renumeration_service),
 		frais_notaire: parseFloat(value.frais_notaire),
 		reserve_argent: parseFloat(value.reserve_argent),
-		valorisation: (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent) + parseFloat(value.renovation)),
+		valorisation: valorisation,
 		loyer_collecter_annuel: parseFloat(value.loyer_collecter_annuel),
 		frais_agence: parseFloat(value.frais_agence),
 		remboursement_emprunt: parseFloat(value.remboursement_emprunt),
 		taxes: parseFloat(value.taxes),
-		revenu_reverser: (parseFloat(value.loyer_collecter_annuel) - parseFloat(value.frais_agence) - parseFloat(value.remboursement_emprunt) + parseFloat(value.taxes)),
-		reverser: ((parseFloat(value.loyer_collecter_annuel) - parseFloat(value.frais_agence) - parseFloat(value.remboursement_emprunt) + parseFloat(value.taxes)) / (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent)) * 100),
+		revenu_reverser: revenu_reverser,
+		reverser: reverser,
 		localisation: value.localisation,
 		etat_immeuble: value.etat_immeuble,
 		nature_lots: value.nature_lots,
@@ -55,6 +55,9 @@ exports.createProperties = async (req, res, next) => {
 		loyer_mensuel: parseFloat(value.loyer_mensuel),
 		aire: parseFloat(value.aire),
 		description: filteredDescription,
+		charge_co_proprietes: value.charge_co_proprietes,
+		taxe_foncières: value.taxe_foncières,
+		assurance: value.assurance,
 		about: filteredAbout,
 		nb_brique: (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent)) / 10,
 		nb_brique_restant: (parseFloat(value.prix_acquisition) + parseFloat(value.renumeration_service) + parseFloat(value.frais_notaire) + parseFloat(value.reserve_argent)) / 10,
