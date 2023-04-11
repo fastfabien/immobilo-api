@@ -64,7 +64,7 @@ const user = new mongoose.Schema({
         type: Number,
         default: 0.0
     }
-})
+}, { timestamps: true })
 
 user.methods.toJSON = function () {
     const user = this;

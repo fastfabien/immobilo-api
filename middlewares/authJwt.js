@@ -4,35 +4,43 @@ const db = require("../models");
 const User = db.user;
 const Role = db.role;
 
-verifyToken =  (req, res, next) => {
-    let token = req.headers["x-access-token"];
+const verifyToken = (req, res, next) => {
+    const token = req.headers["x-access-token"];
+
     if (!token) {
-        return res.status(403).send({ message: "No token provided" })
+        return res.status(403).send({ message: "No token provided" });
     }
 
     jwt.verify(token, config.secret, async (err, decoded) => {
         if (err) {
             return res.status(401).send({ message: "Unauthorized!" });
         }
-    
 
-        const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
-        .populate({
-            path: 'bricks', 
-            populate: {
-                path: 'propertie_id',
-                select: "id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region"
+        try {
+            const { _id } = decoded;
+            const { secret } = config;
+
+            const user = await User.findOne({ _id, 'tokens.token': token })
+                .populate({
+                    path: 'bricks',
+                    populate: {
+                        path: 'propertie_id',
+                        select: 'id nom zip rue valorisation rentabiliter reverser nb_brique_restant image_couverture prix_acquisition region',
+                    },
+                });
+
+            if (!user) {
+                throw new Error();
             }
-        })
 
-        if (!user) {
-            throw new Error()
+            req.user = user;
+            next();
+        } catch (error) {
+            return res.status(401).send({ message: "Unauthorized!" });
         }
-
-        req.user = user
-        next();
     });
 };
+
 
 isAdmin = (req, res, next) => {
     User.findById(req.user.id).exec((err, user) => {

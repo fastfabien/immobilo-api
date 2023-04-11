@@ -42,7 +42,7 @@ const Properties = new mongoose.Schema({
 		type: Buffer
 	}],
 	image_couverture: Buffer
-})
+}, { timestamps: true })
 
 const propriete = mongoose.model(
 	"Properties", Properties

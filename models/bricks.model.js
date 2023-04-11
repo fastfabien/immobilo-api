@@ -17,11 +17,11 @@ const Bricks = new mongoose.Schema({
 		required: true
 	},
 	status: {
-        type: String,
-        enum: ['Sell', 'Selled'],
-        default: 'Sell'
-    },
-}, {timestamp: {createdAt: 'created_at', updatedAt: 'updated_at'}})
+		type: String,
+		enum: ['Sell', 'Selled'],
+		default: 'Sell'
+	},
+}, { timestamps: true })
 
 const bricks = mongoose.model(
 	"Bricks", Bricks
