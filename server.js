@@ -74,7 +74,7 @@ function initial() {
                 name: "moderator"
             }).save(err => {
                 if (err) {
-                    console.log("error", err);
+                    console.log("erroar", err);
                 }
 
                 console.log("added 'moderator' to roles collection");
