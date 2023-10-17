@@ -71,7 +71,6 @@ exports.createProperties = async (req, res, next) => {
 				.jpeg({ quality: 30 })
 				.png({ compressionLevel: 5 })
 				.toBuffer();
-			console.log('ato ee!')
 		} else {
 			compressedImage = await sharp(files[i].buffer)
 				.resize({ width: 500 })

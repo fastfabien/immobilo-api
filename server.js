@@ -54,6 +54,8 @@ function initial() {
                 const user = new User({
                     username: "user",
                     email: "user@user.com",
+                    firstName: "user",
+                    lastName: "user",
                     password: bcrypt.hashSync("user123456789", 8),
                     status: 'Active',
                     verification: 'Verifier'
@@ -90,6 +92,8 @@ function initial() {
                 const token = jwt.sign({ email: "admin@admin.com" }, config.secret)
                 const admin = new User({
                     username: "admin",
+                    firstName: "admin",
+                    lastName: "admin",
                     email: "admin@admin.com",
                     password: bcrypt.hashSync("admin123456789", 8),
                     status: 'Active',

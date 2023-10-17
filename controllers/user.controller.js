@@ -212,8 +212,6 @@ exports.createOrder = async (req, res) => {
 
 
 exports.capturePayment = async (req, res) => {
-    console.log("*".repeat(100));
-    console.log(req.body.orderId);
     // check if orderId exists and has a value
     if (!req.body.orderId) {
         res.status(400).send({ message: "Order ID not provided" });
